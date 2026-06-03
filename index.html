@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FinançasMax - Gestão Inteligente</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -20,7 +21,7 @@
                         brand: {
                             50: '#f0fdf4',
                             100: '#dcfce7',
-                            500: '#10b981', /* Esmeralda */
+                            500: '#10b981', /* Esmeralda Premium */
                             600: '#059669',
                             700: '#047857',
                         }
@@ -29,6 +30,7 @@
             }
         }
     </script>
+    
     <style>
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -83,7 +85,7 @@
 
     <main class="max-w-6xl mx-auto px-4 py-6 space-y-6 pb-24">
 
-        <!-- Notificação Flutuante -->
+        <!-- Notificação Flutuante (Toast) -->
         <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
             <div class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3">
                 <span id="toastIcon" class="p-1 rounded bg-slate-800 dark:bg-slate-100 text-brand-500">
@@ -93,7 +95,7 @@
             </div>
         </div>
 
-        <!-- Alerta de Chave API Ausente (Apenas para lembrar do Gemini) -->
+        <!-- Alerta de Chave API Ausente -->
         <div id="apiAlert" class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-400 p-4 rounded-2xl flex items-start space-x-3 text-xs">
             <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5"></i>
             <div>
@@ -120,7 +122,7 @@
                             </span>
                             <h3 class="font-bold text-lg">Central de Entrada com IA</h3>
                         </div>
-                        <span class="text-[10px] uppercase font-bold tracking-wider text-brand-400 bg-brand-950 px-2 py-0.5 rounded border border-brand-800">Gemini 2.5 Ativo</span>
+                        <span class="text-[10px] uppercase font-bold tracking-wider text-brand-400 bg-brand-950 px-2 py-0.5 rounded border border-brand-800">Gemini 2.5 Flash Ativo</span>
                     </div>
                     
                     <p class="text-xs text-slate-300 mb-6 leading-relaxed max-w-xl">
@@ -420,7 +422,7 @@
 
             <div id="noDataState" class="hidden flex flex-col items-center justify-center p-12 text-center">
                 <i data-lucide="filter-x" class="w-8 h-8 text-slate-400 mb-2"></i>
-                <h4 class="font-bold class text-slate-600 dark:text-slate-300">Nenhum lançamento correspondente aos filtros</h4>
+                <h4 class="font-bold text-slate-600 dark:text-slate-300">Nenhum lançamento correspondente aos filtros</h4>
             </div>
 
             <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
@@ -499,7 +501,7 @@
 
     <!-- Scripts e Lógica IA -->
     <script>
-        // Configuração de API Key do Gemini (Armazenada no localStorage do usuário de forma segura)
+        // Configuração de API Key do Gemini (Armazenada no localStorage de forma segura)
         let customApiKey = localStorage.getItem('gemini_custom_api_key') || "";
 
         // Categorias Pré-definidas
@@ -522,12 +524,11 @@
         let loadedFileBase64 = "";
         let loadedFileMime = "";
 
-        // Recuperar lista do localStorage (se já tiver sido limpa)
+        // Recuperar lista do localStorage
         const savedData = localStorage.getItem('financas_max_transactions_v2');
         if (savedData) {
             transactions = JSON.parse(savedData);
         } else {
-            // ZERADO conforme o pedido de hoje
             transactions = [];
             localStorage.setItem('financas_max_transactions_v2', JSON.stringify([]));
         }
@@ -787,11 +788,11 @@
             }
         });
 
-        // Chamada à API Oficial do Gemini para estruturação de dados
+        // Chamada à API Oficial do Gemini para estruturação de dados (gemini-2.5-flash)
         async function callGeminiApi(prompt, systemPrompt, optionalFile = null) {
             let retries = 5;
             let delay = 1000;
-            const currentKey = customApiKey || apiKey;
+            const currentKey = customApiKey;
 
             if (!currentKey) {
                 throw new Error("Chave API do Gemini ausente. Adicione uma nas configurações.");
@@ -834,7 +835,8 @@
 
             while (retries > 0) {
                 try {
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${currentKey}`, {
+                    // ATUALIZADO: Corrigido o endpoint para o modelo de produção gemini-2.5-flash resolvendo o erro 404
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${currentKey}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
