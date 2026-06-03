@@ -679,6 +679,47 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // --- CONSTANTES E UTILITÁRIOS FALTANTES ---
+        const CATEGORIES_MAP = {
+            income: ["Salário", "Investimentos", "Freelancer", "Outras Receitas"],
+            expense: ["Alimentação", "Transporte", "Moradia", "Lazer", "Saúde", "Educação", "Assinaturas/Serviços", "Outros Custos"]
+        };
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        }
+
+        window.triggerToast = function(message, isSuccess = true) {
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'fixed top-4 right-4 z-[200] flex flex-col gap-2 pointer-events-none';
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `flex items-center space-x-2 px-4 py-3 rounded-xl shadow-lg text-xs font-bold text-white transform transition-all duration-300 translate-x-full opacity-0 ${isSuccess ? 'bg-emerald-500' : 'bg-rose-500'}`;
+            toast.innerHTML = `
+                <i data-lucide="${isSuccess ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i>
+                <span>${message}</span>
+            `;
+            
+            toastContainer.appendChild(toast);
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // Animação de entrada
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full', 'opacity-0');
+            });
+
+            // Remover após 3 segundos
+            setTimeout(() => {
+                toast.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
         // Estado do Usuário e Lançamentos
         let currentUser = null;
         let activeProfileId = 'pessoal';
