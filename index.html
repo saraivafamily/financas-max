@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinançasMax - Gestão Multiperfil</title>
+    <title>FinançasMax - Gestão Inteligente Multiperfil</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -49,398 +49,450 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
 
-    <!-- Header / Navbar -->
-    <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-            <div class="flex items-center space-x-3 shrink-0">
-                <div class="bg-brand-500 text-white p-2 rounded-xl shadow-md shadow-brand-500/20">
-                    <i data-lucide="bot" class="w-6 h-6"></i>
+    <!-- TELA DE AUTENTICAÇÃO (LOGIN / REGISTRO) -->
+    <div id="authScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 px-4 py-12 relative overflow-hidden">
+        <!-- Detalhes visuais abstratos no fundo -->
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="bg-white/10 dark:bg-slate-900/40 backdrop-blur-md p-8 rounded-3xl border border-white/10 shadow-2xl max-w-md w-full relative z-10 transition-all duration-300">
+            <div class="text-center mb-8">
+                <div class="inline-flex bg-brand-500 text-white p-3 rounded-2xl shadow-lg shadow-brand-500/30 mb-4">
+                    <i data-lucide="bot" class="w-8 h-8"></i>
                 </div>
-                <div class="hidden sm:block">
-                    <h1 class="font-bold text-lg leading-tight">FinançasMax <span class="text-xs bg-brand-100 dark:bg-brand-950 text-brand-700 dark:text-brand-400 px-2 py-0.5 rounded-full ml-1.5 font-normal">Perfis</span></h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Controle inteligente individualizado</p>
-                </div>
+                <h2 class="text-2xl font-black text-white leading-tight tracking-tight">FinançasMax</h2>
+                <p class="text-xs text-slate-400 mt-1">Sua conta inteligente de controle financeiro</p>
             </div>
-            
-            <div class="flex items-center space-x-2">
-                <!-- Seletor e Gestão de Perfis -->
-                <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 rounded-xl px-2.5 py-1.5 border border-slate-200/50 dark:border-slate-700/50">
-                    <i data-lucide="users" class="w-4 h-4 text-slate-500 dark:text-slate-400"></i>
-                    <select id="profileSwitcher" class="bg-transparent text-xs font-bold focus:outline-none cursor-pointer text-slate-700 dark:text-slate-200 pr-1">
-                        <!-- Injetado dinamicamente -->
-                    </select>
-                    <button id="manageProfilesBtn" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-500 dark:text-slate-400 transition-colors" title="Gerenciar Perfis">
-                        <i data-lucide="folder-cog" class="w-3.5 h-3.5"></i>
-                    </button>
-                </div>
 
-                <!-- Configurações API Key -->
-                <button id="settingsBtn" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors" title="Configurações de IA">
-                    <i data-lucide="settings" class="w-5 h-5"></i>
+            <!-- Tabs de Auth -->
+            <div class="grid grid-cols-2 gap-1 bg-white/5 p-1 rounded-xl border border-white/10 mb-6">
+                <button id="tabLogin" class="py-2 text-xs font-bold rounded-lg bg-brand-500 text-slate-950 transition-all">
+                    Acessar Conta
                 </button>
-
-                <!-- WhatsApp Sync Badge -->
-                <button id="whatsappGuideBtn" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 hover:bg-emerald-100 transition-all">
-                    <i data-lucide="message-square-code" class="w-4 h-4"></i>
-                    <span class="hidden md:inline">WhatsApp</span>
-                </button>
-
-                <!-- Toggle Dark Mode -->
-                <button id="themeToggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
-                    <i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i>
+                <button id="tabRegister" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all">
+                    Criar Cadastro
                 </button>
             </div>
-        </div>
-    </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-6 space-y-6 pb-24">
-
-        <!-- Notificação Flutuante (Toast) -->
-        <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
-            <div class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-xl shadow-lg flex items-center space-x-3">
-                <span id="toastIcon" class="p-1 rounded bg-slate-800 dark:bg-slate-100 text-brand-500">
-                    <i data-lucide="check" class="w-4 h-4"></i>
-                </span>
-                <p id="toastMessage" class="text-sm font-medium"></p>
-            </div>
-        </div>
-
-        <!-- Alerta de Chave API Ausente -->
-        <div id="apiAlert" class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-400 p-4 rounded-2xl flex items-start space-x-3 text-xs">
-            <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5"></i>
-            <div>
-                <p class="font-bold">Dica para controle por Voz e Fotos:</p>
-                <p class="mt-1">Para habilitar o assistente de inteligência artificial (reconhecimento de notas fiscais e áudio), clique no ícone de engrenagem <i data-lucide="settings" class="w-3.5 h-3.5 inline"></i> acima e adicione a sua chave API do Gemini de forma gratuita.</p>
-            </div>
-        </div>
-
-        <!-- SEÇÃO INTEGRAÇÃO DE SINAIS (IA e WhatsApp) -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Entrada Rápida de Notas, Áudio ou Chat por IA -->
-            <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[340px]">
-                <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none translate-x-10 translate-y-10">
-                    <i data-lucide="brain" class="w-64 h-64 text-brand-500"></i>
-                </div>
-
-                <div class="relative z-10">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex items-center space-x-2">
-                            <span class="flex h-3.5 w-3.5 relative">
-                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-                              <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-brand-500"></span>
-                            </span>
-                            <h3 class="font-bold text-lg">Central de Entrada com IA</h3>
-                        </div>
-                        <span class="text-[10px] uppercase font-bold tracking-wider text-brand-400 bg-brand-950 px-2 py-0.5 rounded border border-brand-800">Gemini 2.5 Flash Ativo</span>
-                    </div>
-                    
-                    <p class="text-xs text-slate-300 mb-6 leading-relaxed max-w-xl">
-                        Escreva de forma natural, faça upload de uma foto de comprovante/cupom fiscal, ou use o microfone para falar o seu lançamento. A nossa IA vai extrair automaticamente o valor, descrição, categoria correta e data diretamente para o perfil ativo!
-                    </p>
-
-                    <!-- Tabs de Entrada de Mídia -->
-                    <div class="grid grid-cols-3 gap-2 bg-slate-800/50 p-1.5 rounded-xl border border-slate-700/50 mb-4">
-                        <button id="tabText" class="py-2 text-xs font-semibold rounded-lg bg-slate-700 text-white transition-all flex items-center justify-center space-x-1.5">
-                            <i data-lucide="keyboard" class="w-4 h-4"></i>
-                            <span>Texto</span>
-                        </button>
-                        <button id="tabImage" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all flex items-center justify-center space-x-1.5">
-                            <i data-lucide="image" class="w-4 h-4"></i>
-                            <span>Foto/Nota</span>
-                        </button>
-                        <button id="tabVoice" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all flex items-center justify-center space-x-1.5">
-                            <i data-lucide="mic" class="w-4 h-4"></i>
-                            <span>Áudio</span>
-                        </button>
-                    </div>
-
-                    <!-- Área Dinâmica das Abas -->
-                    <!-- 1. Texto -->
-                    <div id="areaText" class="space-y-3">
-                        <textarea id="aiTextInput" rows="3" placeholder="Ex: Gastei 42,90 com almoço no restaurante hoje no cartão..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500 resize-none"></textarea>
-                    </div>
-
-                    <!-- 2. Imagem (Upload Nota Fiscal) -->
-                    <div id="areaImage" class="hidden space-y-3">
-                        <div class="border-2 border-dashed border-slate-700 hover:border-brand-500 transition-colors rounded-xl p-4 text-center cursor-pointer relative" id="dropzone">
-                            <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
-                            <div id="uploadPlaceholder" class="space-y-1">
-                                <i data-lucide="upload-cloud" class="w-8 h-8 mx-auto text-slate-400"></i>
-                                <p class="text-xs font-semibold text-slate-200">Clique para enviar a foto da nota fiscal</p>
-                                <p class="text-[10px] text-slate-500">Formatos suportados: PNG, JPG ou WEBP</p>
-                            </div>
-                            <!-- Preview da Imagem Carregada -->
-                            <div id="uploadPreview" class="hidden flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
-                                <div class="flex items-center space-x-3">
-                                    <img id="previewImg" class="w-10 h-10 object-cover rounded-lg border border-slate-700" src="">
-                                    <div class="text-left">
-                                        <p id="previewName" class="text-xs font-semibold text-slate-200 truncate max-w-[150px]"></p>
-                                        <p id="previewSize" class="text-[10px] text-slate-500"></p>
-                                    </div>
-                                </div>
-                                <button id="removeFileBtn" class="text-red-400 hover:text-red-300 p-1 rounded hover:bg-slate-800">
-                                    <i data-lucide="x" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 3. Áudio (Gravação/Transcrição) -->
-                    <div id="areaVoice" class="hidden flex flex-col items-center justify-center py-4 space-y-4">
-                        <button id="voiceRecordBtn" class="w-16 h-16 rounded-full bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all flex items-center justify-center shadow-lg shadow-rose-600/20">
-                            <i data-lucide="mic" class="w-8 h-8 text-white" id="micIcon"></i>
-                        </button>
-                        <div class="text-center">
-                            <p class="text-xs font-semibold" id="voiceStatus">Toque para começar a falar</p>
-                            <p class="text-[10px] text-slate-400 mt-1 max-w-[280px]">Discorra sobre o seu gasto de forma natural (Ex: "Comprei pão por 8,50 na padaria ontem")</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative z-10 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3 mt-4">
-                    <p class="text-[10px] text-slate-500 flex items-center">
-                        <i data-lucide="lock" class="w-3.5 h-3.5 mr-1"></i> Processamento seguro de dados.
-                    </p>
-                    <button id="processAiBtn" class="bg-brand-500 hover:bg-brand-600 text-slate-900 font-bold px-5 py-2 rounded-xl text-xs flex items-center space-x-1.5 transition-all shadow-md shadow-brand-500/10">
-                        <span id="aiBtnText">Interpretar & Lançar</span>
-                        <i data-lucide="sparkles" class="w-4 h-4" id="aiBtnIcon"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Dashboard de Resumo Financeiro Simplificado -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+            <!-- Formulário Auth -->
+            <form id="authForm" class="space-y-4 text-left">
                 <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <i data-lucide="wallet" class="w-5 h-5 text-brand-500"></i>
-                        <h3 class="font-bold text-lg">Resumo: <span id="summaryProfileName" class="text-brand-600 dark:text-brand-400">Pessoal</span></h3>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Saldo Consolidado</p>
-                            <h2 id="totalBalance" class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">R$ 0,00</h2>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-3 pt-2">
-                            <div class="bg-emerald-50/50 dark:bg-emerald-950/20 p-3 rounded-xl border border-emerald-100/50 dark:border-emerald-900/30">
-                                <span class="text-[10px] font-bold uppercase text-emerald-600 dark:text-emerald-400 flex items-center">
-                                    <i data-lucide="arrow-up" class="w-3 h-3 mr-1"></i> Receitas
-                                </span>
-                                <p id="totalIncomes" class="text-lg font-bold text-slate-900 dark:text-white mt-1">R$ 0,00</p>
-                            </div>
-                            <div class="bg-rose-50/50 dark:bg-rose-950/20 p-3 rounded-xl border border-rose-100/50 dark:border-rose-900/30">
-                                <span class="text-[10px] font-bold uppercase text-rose-600 dark:text-rose-400 flex items-center">
-                                    <i data-lucide="arrow-down" class="w-3 h-3 mr-1"></i> Despesas
-                                </span>
-                                <p id="totalExpenses" class="text-lg font-bold text-slate-900 dark:text-white mt-1">R$ 0,00</p>
-                            </div>
-                        </div>
-                    </div>
+                    <label for="authEmail" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Endereço de E-mail</label>
+                    <input type="email" id="authEmail" required placeholder="seu@email.com" class="w-full bg-slate-900/80 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
                 </div>
 
-                <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/50">
-                    <div class="flex justify-between text-xs text-slate-500">
-                        <span>Total de registros:</span>
-                        <span class="font-bold text-slate-800 dark:text-slate-200" id="txCount">0 lançamentos</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Formulário Manual Tradicional, Gráficos e Filtros -->
-        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Formulário de Transação Manual -->
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm h-fit">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="file-plus-2" class="w-5 h-5 text-indigo-500"></i>
-                        <h3 class="font-bold text-base">Lançamento Manual</h3>
-                    </div>
+                <div>
+                    <label for="authPassword" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Sua Senha de Acesso</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-slate-900/80 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
                 </div>
 
-                <form id="transactionForm" class="space-y-4">
-                    <!-- Tipo -->
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="relative flex items-center justify-center py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer transition-all" id="incomeLabel">
-                            <input type="radio" name="type" value="income" checked class="sr-only" id="typeIncome">
-                            <span class="flex items-center space-x-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-                                <span>Receita</span>
-                            </span>
-                        </label>
-                        <label class="relative flex items-center justify-center py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer transition-all" id="expenseLabel">
-                            <input type="radio" name="type" value="expense" class="sr-only" id="typeExpense">
-                            <span class="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
-                                <i data-lucide="minus" class="w-3.5 h-3.5"></i>
-                                <span>Despesa</span>
-                            </span>
-                        </label>
-                    </div>
+                <button type="submit" class="w-full py-3 mt-2 bg-brand-500 hover:bg-brand-600 text-slate-950 font-extrabold rounded-xl text-xs transition-all shadow-lg shadow-brand-500/20 flex items-center justify-center space-x-2">
+                    <span id="authSubmitText">Entrar no Aplicativo</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4" id="authSubmitIcon"></i>
+                </button>
+            </form>
+        </div>
+    </div>
 
-                    <!-- Descrição -->
-                    <div>
-                        <label for="description" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Descrição</label>
-                        <input type="text" id="description" placeholder="Ex: Mercado CompreBem" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all">
+    <!-- TELA PRINCIPAL DO APP (Oculta até autenticar) -->
+    <div id="appScreen" class="hidden">
+        <!-- Header / Navbar -->
+        <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
+            <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+                <div class="flex items-center space-x-3 shrink-0">
+                    <div class="bg-brand-500 text-white p-2 rounded-xl shadow-md shadow-brand-500/20">
+                        <i data-lucide="bot" class="w-6 h-6"></i>
                     </div>
-
-                    <!-- Valor e Data -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="amount" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Valor (R$)</label>
-                            <input type="number" step="0.01" id="amount" placeholder="0,00" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all">
-                        </div>
-                        <div>
-                            <label for="date" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Data</label>
-                            <input type="date" id="date" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all">
-                        </div>
+                    <div class="hidden sm:block">
+                        <h1 class="font-bold text-lg leading-tight">FinançasMax</h1>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Controle inteligente individualizado</p>
                     </div>
-
-                    <!-- Categoria -->
-                    <div>
-                        <label for="category" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Categoria</label>
-                        <select id="category" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all dark:bg-slate-800">
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <!-- Seletor e Gestão de Perfis -->
+                    <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 rounded-xl px-2.5 py-1.5 border border-slate-200/50 dark:border-slate-700/50">
+                        <i data-lucide="users" class="w-4 h-4 text-slate-500 dark:text-slate-400"></i>
+                        <select id="profileSwitcher" class="bg-transparent text-xs font-bold focus:outline-none cursor-pointer text-slate-700 dark:text-slate-200 pr-1">
                             <!-- Injetado dinamicamente -->
                         </select>
+                        <button id="manageProfilesBtn" class="p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-500 dark:text-slate-400 transition-colors" title="Gerenciar Perfis">
+                            <i data-lucide="folder-cog" class="w-3.5 h-3.5"></i>
+                        </button>
                     </div>
 
-                    <button type="submit" class="w-full py-2.5 bg-brand-500 hover:bg-brand-600 text-slate-900 font-bold rounded-xl text-xs transition-all flex items-center justify-center space-x-1.5">
-                        <i data-lucide="check" class="w-4 h-4"></i>
-                        <span>Inserir Transação</span>
+                    <!-- Open Finance / Sincronização Bancária -->
+                    <button id="bankSyncBtn" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-brand-500 transition-colors relative" title="Sincronizar Bancos">
+                        <i data-lucide="landmark" class="w-5 h-5"></i>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-500 rounded-full animate-ping"></span>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-brand-500 rounded-full"></span>
                     </button>
-                </form>
+
+                    <!-- Configurações API Key -->
+                    <button id="settingsBtn" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors" title="Configurações de IA">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </button>
+
+                    <!-- Toggle Dark Mode -->
+                    <button id="themeToggle" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors">
+                        <i data-lucide="moon" id="themeIcon" class="w-5 h-5"></i>
+                    </button>
+
+                    <!-- Sair (Logout) -->
+                    <button id="logoutBtn" class="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-950/20 text-rose-500 transition-colors" title="Sair da Conta">
+                        <i data-lucide="log-out" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-6xl mx-auto px-4 py-6 space-y-6 pb-24">
+
+            <!-- Alerta de Chave API Ausente -->
+            <div id="apiAlert" class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900 text-amber-800 dark:text-amber-400 p-4 rounded-2xl flex items-start space-x-3 text-xs">
+                <i data-lucide="info" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                <div>
+                    <p class="font-bold">Dica para controle por Voz e Fotos:</p>
+                    <p class="mt-1">Para habilitar o assistente de inteligência artificial (reconhecimento de notas fiscais e áudio), clique no ícone de engrenagem <i data-lucide="settings" class="w-3.5 h-3.5 inline"></i> acima e adicione a sua chave API do Gemini de forma gratuita.</p>
+                </div>
             </div>
 
-            <!-- Gráfico de Distribuição -->
-            <div class="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
-                <div>
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-500"></i>
-                            <h3 class="font-bold text-base">Análise de Categorias</h3>
-                        </div>
-                        <span class="text-[10px] text-slate-400 dark:text-slate-500">Filtrado no período</span>
+            <!-- SEÇÃO INTEGRAÇÃO DE SINAIS (IA e WhatsApp) -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Entrada Rápida de Notas, Áudio ou Chat por IA -->
+                <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6 rounded-2xl border border-slate-800 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[340px]">
+                    <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none translate-x-10 translate-y-10">
+                        <i data-lucide="brain" class="w-64 h-64 text-brand-500"></i>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                        <div class="relative flex justify-center items-center h-44">
-                            <canvas id="categoryChart"></canvas>
-                            <div id="emptyChartMessage" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/50 rounded-xl hidden">
-                                <i data-lucide="bar-chart-2" class="w-8 h-8 text-slate-400 mb-1 animate-pulse"></i>
-                                <p class="text-[10px] text-slate-400 font-medium">Sem dados visíveis</p>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="flex items-center space-x-2">
+                                <span class="flex h-3.5 w-3.5 relative">
+                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                                  <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-brand-500"></span>
+                                </span>
+                                <h3 class="font-bold text-lg">Central de Entrada com IA</h3>
+                            </div>
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-brand-400 bg-brand-950 px-2 py-0.5 rounded border border-brand-800">Gemini 2.5 Flash Ativo</span>
+                        </div>
+                        
+                        <p class="text-xs text-slate-300 mb-6 leading-relaxed max-w-xl">
+                            Escreva de forma natural, faça upload de uma foto de comprovante/cupom fiscal, ou use o microfone para falar o seu lançamento. A nossa IA vai extrair automaticamente o valor, descrição, categoria correta e data diretamente para o perfil ativo!
+                        </p>
+
+                        <!-- Tabs de Entrada de Mídia -->
+                        <div class="grid grid-cols-3 gap-2 bg-slate-800/50 p-1.5 rounded-xl border border-slate-700/50 mb-4">
+                            <button id="tabText" class="py-2 text-xs font-semibold rounded-lg bg-slate-700 text-white transition-all flex items-center justify-center space-x-1.5">
+                                <i data-lucide="keyboard" class="w-4 h-4"></i>
+                                <span>Texto</span>
+                            </button>
+                            <button id="tabImage" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all flex items-center justify-center space-x-1.5">
+                                <i data-lucide="image" class="w-4 h-4"></i>
+                                <span>Foto/Nota</span>
+                            </button>
+                            <button id="tabVoice" class="py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all flex items-center justify-center space-x-1.5">
+                                <i data-lucide="mic" class="w-4 h-4"></i>
+                                <span>Áudio</span>
+                            </button>
+                        </div>
+
+                        <!-- Área Dinâmica das Abas -->
+                        <div id="areaText" class="space-y-3">
+                            <textarea id="aiTextInput" rows="3" placeholder="Ex: Gastei 42,90 com almoço no restaurante hoje no cartão..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500 resize-none"></textarea>
+                        </div>
+
+                        <div id="areaImage" class="hidden space-y-3">
+                            <div class="border-2 border-dashed border-slate-700 hover:border-brand-500 transition-colors rounded-xl p-4 text-center cursor-pointer relative" id="dropzone">
+                                <input type="file" id="fileInput" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                                <div id="uploadPlaceholder" class="space-y-1">
+                                    <i data-lucide="upload-cloud" class="w-8 h-8 mx-auto text-slate-400"></i>
+                                    <p class="text-xs font-semibold text-slate-200">Clique para enviar a foto da nota fiscal</p>
+                                    <p class="text-[10px] text-slate-500">Formatos suportados: PNG, JPG ou WEBP</p>
+                                </div>
+                                <div id="uploadPreview" class="hidden flex items-center justify-between bg-slate-900 p-2 rounded-lg border border-slate-800">
+                                    <div class="flex items-center space-x-3">
+                                        <img id="previewImg" class="w-10 h-10 object-cover rounded-lg border border-slate-700" src="">
+                                        <div class="text-left">
+                                            <p id="previewName" class="text-xs font-semibold text-slate-200 truncate max-w-[150px]"></p>
+                                            <p id="previewSize" class="text-[10px] text-slate-500"></p>
+                                        </div>
+                                    </div>
+                                    <button id="removeFileBtn" class="text-red-400 hover:text-red-300 p-1 rounded hover:bg-slate-800">
+                                        <i data-lucide="x" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="space-y-2 max-h-[180px] overflow-y-auto custom-scrollbar" id="legendContainer">
-                            <!-- Legendas -->
+
+                        <div id="areaVoice" class="hidden flex flex-col items-center justify-center py-4 space-y-4">
+                            <button id="voiceRecordBtn" class="w-16 h-16 rounded-full bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all flex items-center justify-center shadow-lg shadow-rose-600/20">
+                                <i data-lucide="mic" class="w-8 h-8 text-white" id="micIcon"></i>
+                            </button>
+                            <div class="text-center">
+                                <p class="text-xs font-semibold" id="voiceStatus">Toque para começar a falar</p>
+                                <p class="text-[10px] text-slate-400 mt-1 max-w-[280px]">Discorra sobre o seu gasto de forma natural (Ex: "Comprei pão por 8,50 na padaria ontem")</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-3 mt-4">
+                        <p class="text-[10px] text-slate-500 flex items-center">
+                            <i data-lucide="lock" class="w-3.5 h-3.5 mr-1"></i> Processamento seguro de dados.
+                        </p>
+                        <button id="processAiBtn" class="bg-brand-500 hover:bg-brand-600 text-slate-900 font-bold px-5 py-2 rounded-xl text-xs flex items-center space-x-1.5 transition-all shadow-md shadow-brand-500/10">
+                            <span id="aiBtnText">Interpretar & Lançar</span>
+                            <i data-lucide="sparkles" class="w-4 h-4" id="aiBtnIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dashboard de Resumo Financeiro Simplificado -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i data-lucide="wallet" class="w-5 h-5 text-brand-500"></i>
+                            <h3 class="font-bold text-lg">Resumo: <span id="summaryProfileName" class="text-brand-600 dark:text-brand-400">Carregando...</span></h3>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Saldo Consolidado</p>
+                                <h2 id="totalBalance" class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">R$ 0,00</h2>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3 pt-2">
+                                <div class="bg-emerald-50/50 dark:bg-emerald-950/20 p-3 rounded-xl border border-emerald-100/50 dark:border-emerald-900/30">
+                                    <span class="text-[10px] font-bold uppercase text-emerald-600 dark:text-emerald-400 flex items-center">
+                                        <i data-lucide="arrow-up" class="w-3 h-3 mr-1"></i> Receitas
+                                    </span>
+                                    <p id="totalIncomes" class="text-lg font-bold text-slate-900 dark:text-white mt-1">R$ 0,00</p>
+                                </div>
+                                <div class="bg-rose-50/50 dark:bg-rose-950/20 p-3 rounded-xl border border-rose-100/50 dark:border-rose-900/30">
+                                    <span class="text-[10px] font-bold uppercase text-rose-600 dark:text-rose-400 flex items-center">
+                                        <i data-lucide="arrow-down" class="w-3 h-3 mr-1"></i> Despesas
+                                    </span>
+                                    <p id="totalExpenses" class="text-lg font-bold text-slate-900 dark:text-white mt-1">R$ 0,00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-700/50 flex justify-between items-center">
+                        <div class="flex justify-between text-xs text-slate-500 w-full">
+                            <span>Total de registros:</span>
+                            <span class="font-bold text-slate-800 dark:text-slate-200" id="txCount">0 lançamentos</span>
                         </div>
                     </div>
                 </div>
-                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50 flex justify-between items-center text-[10px] text-slate-400">
-                    <span>Gráfico atualizado em tempo real</span>
-                    <span class="font-medium text-slate-500 dark:text-slate-300" id="chartStatusText">Proporção Geral</span>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Filtros e Relatórios -->
-        <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden">
-            <!-- Barra de Filtros -->
-            <div class="p-6 border-b border-slate-200 dark:border-slate-700/80">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="flex items-center space-x-2">
-                        <i data-lucide="sliders-horizontal" class="w-5 h-5 text-amber-500"></i>
+            <!-- Formulários, Gráficos e Tabelas -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Formulário Manual -->
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm h-fit">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="file-plus-2" class="w-5 h-5 text-indigo-500"></i>
+                            <h3 class="font-bold text-base">Lançamento Manual</h3>
+                        </div>
+                    </div>
+
+                    <form id="transactionForm" class="space-y-4">
+                        <!-- Tipo -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="relative flex items-center justify-center py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer transition-all" id="incomeLabel">
+                                <input type="radio" name="type" value="income" checked class="sr-only" id="typeIncome">
+                                <span class="flex items-center space-x-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                    <span>Receita</span>
+                                </span>
+                            </label>
+                            <label class="relative flex items-center justify-center py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer transition-all" id="expenseLabel">
+                                <input type="radio" name="type" value="expense" class="sr-only" id="typeExpense">
+                                <span class="flex items-center space-x-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                                    <i data-lucide="minus" class="w-3.5 h-3.5"></i>
+                                    <span>Despesa</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <!-- Descrição -->
                         <div>
-                            <h3 class="font-bold text-base">Filtros Avançados</h3>
-                            <p class="text-xs text-slate-400">Filtre as contas do perfil ativo para exportação ou conferência</p>
+                            <label for="description" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Descrição</label>
+                            <input type="text" id="description" placeholder="Ex: Mercado CompreBem" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all">
+                        </div>
+
+                        <!-- Valor e Data -->
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="amount" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Valor (R$)</label>
+                                <input type="number" step="0.01" id="amount" placeholder="0,00" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label for="date" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Data</label>
+                                <input type="date" id="date" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+
+                        <!-- Categoria -->
+                        <div>
+                            <label for="category" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Categoria</label>
+                            <select id="category" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-transparent transition-all dark:bg-slate-800">
+                                <!-- Injetado dinamicamente -->
+                            </select>
+                        </div>
+
+                        <button type="submit" class="w-full py-2.5 bg-brand-500 hover:bg-brand-600 text-slate-900 font-bold rounded-xl text-xs transition-all flex items-center justify-center space-x-1.5">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>Inserir Transação</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Gráfico de Distribuição -->
+                <div class="lg:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-500"></i>
+                                <h3 class="font-bold text-base">Análise de Categorias</h3>
+                            </div>
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500">Filtrado no período</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                            <div class="relative flex justify-center items-center h-44">
+                                <canvas id="categoryChart"></canvas>
+                                <div id="emptyChartMessage" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-800/50 rounded-xl hidden">
+                                    <i data-lucide="bar-chart-2" class="w-8 h-8 text-slate-400 mb-1 animate-pulse"></i>
+                                    <p class="text-[10px] text-slate-400 font-medium">Sem dados visíveis</p>
+                                </div>
+                            </div>
+                            <div class="space-y-2 max-h-[180px] overflow-y-auto custom-scrollbar" id="legendContainer">
+                                <!-- Legendas -->
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="flex space-x-2 w-full md:w-auto">
-                        <button id="exportCsvBtn" class="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                            <span>Exportar CSV</span>
-                        </button>
-                        <button id="printReportBtn" class="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
-                            <i data-lucide="printer" class="w-4 h-4"></i>
-                            <span>Imprimir</span>
-                        </button>
+                    <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50 flex justify-between items-center text-[10px] text-slate-400">
+                        <span>Gráfico atualizado em tempo real</span>
+                        <span class="font-medium text-slate-500 dark:text-slate-300" id="chartStatusText">Proporção Geral</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Filtros e Relatórios -->
+            <section class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm overflow-hidden">
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700/80">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="sliders-horizontal" class="w-5 h-5 text-amber-500"></i>
+                            <div>
+                                <h3 class="font-bold text-base">Filtros Avançados</h3>
+                                <p class="text-xs text-slate-400">Filtre as contas do perfil ativo para exportação ou conferência</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex space-x-2 w-full md:w-auto">
+                            <button id="exportCsvBtn" class="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                                <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                                <span>Exportar CSV</span>
+                            </button>
+                            <button id="printReportBtn" class="flex-1 md:flex-initial flex items-center justify-center space-x-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                                <i data-lucide="printer" class="w-4 h-4"></i>
+                                <span>Imprimir</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-6">
+                        <div class="relative">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Busca textual</label>
+                            <span class="absolute left-3 top-[29px] text-slate-400">
+                                <i data-lucide="search" class="w-4 h-4"></i>
+                            </span>
+                            <input type="text" id="filterSearch" placeholder="Descrição..." class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Tipo</label>
+                            <select id="filterType" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all dark:bg-slate-800">
+                                <option value="all">Todos os fluxos</option>
+                                <option value="income">Apenas Receitas (+)</option>
+                                <option value="expense">Apenas Despesas (-)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Categoria</label>
+                            <select id="filterCategory" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all dark:bg-slate-800">
+                                <option value="all">Todas</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Início</label>
+                            <input type="date" id="filterDateStart" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Fim</label>
+                            <input type="date" id="filterDateEnd" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-6">
-                    <!-- Busca -->
-                    <div class="relative">
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Busca textual</label>
-                        <span class="absolute left-3 top-[29px] text-slate-400">
-                            <i data-lucide="search" class="w-4 h-4"></i>
-                        </span>
-                        <input type="text" id="filterSearch" placeholder="Descrição..." class="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
-                    </div>
+                <!-- Tabela de Lançamentos -->
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+                                <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipo</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Descrição</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Categoria</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Data</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Valor</th>
+                                <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionList" class="divide-y divide-slate-100 dark:divide-slate-800">
+                            <!-- Itens dinâmicos -->
+                        </tbody>
+                    </table>
+                </div>
 
-                    <!-- Tipo -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Tipo</label>
-                        <select id="filterType" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all dark:bg-slate-800">
-                            <option value="all">Todos os fluxos</option>
-                            <option value="income">Apenas Receitas (+)</option>
-                            <option value="expense">Apenas Despesas (-)</option>
-                        </select>
-                    </div>
+                <div id="noDataState" class="hidden flex flex-col items-center justify-center p-12 text-center">
+                    <i data-lucide="filter-x" class="w-8 h-8 text-slate-400 mb-2"></i>
+                    <h4 class="font-bold text-slate-600 dark:text-slate-300">Nenhum lançamento correspondente aos filtros</h4>
+                </div>
 
-                    <!-- Categoria -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Categoria</label>
-                        <select id="filterCategory" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all dark:bg-slate-800">
-                            <option value="all">Todas</option>
-                        </select>
-                    </div>
+                <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
+                    <span id="filteredRecordsText" class="text-slate-400">Mostrando 0 registros</span>
+                    <span class="font-bold" id="filteredSum">R$ 0,00</span>
+                </div>
+            </section>
+        </main>
+    </div>
 
-                    <!-- Início -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Início</label>
-                        <input type="date" id="filterDateStart" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
-                    </div>
-
-                    <!-- Fim -->
-                    <div>
-                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Fim</label>
-                        <input type="date" id="filterDateEnd" class="w-full px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all">
-                    </div>
+    <!-- MODAL CUSTOMIZADO DE CONFIRMAÇÃO (Substitui confirm() nativo) -->
+    <div id="customConfirmModal" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl max-w-sm w-full mx-4 transform scale-95 transition-transform duration-200">
+            <div class="flex items-start space-x-3 text-rose-500 mb-4">
+                <div class="bg-rose-50 dark:bg-rose-950/30 p-2 rounded-xl">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 id="confirmModalTitle" class="font-bold text-lg text-slate-900 dark:text-white">Atenção</h3>
+                    <p id="confirmModalDesc" class="text-xs text-slate-500 dark:text-slate-400 mt-1"></p>
                 </div>
             </div>
-
-            <!-- Tabela -->
-            <div class="overflow-x-auto custom-scrollbar">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tipo</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Descrição</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Categoria</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Data</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Valor</th>
-                            <th class="px-6 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider text-center">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionList" class="divide-y divide-slate-100 dark:divide-slate-800">
-                        <!-- Itens dinâmicos -->
-                    </tbody>
-                </table>
+            <div class="flex space-x-2 justify-end">
+                <button id="confirmNoBtn" class="px-4 py-2 text-xs font-semibold rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors">Cancelar</button>
+                <button id="confirmYesBtn" class="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition-colors">Confirmar</button>
             </div>
-
-            <div id="noDataState" class="hidden flex flex-col items-center justify-center p-12 text-center">
-                <i data-lucide="filter-x" class="w-8 h-8 text-slate-400 mb-2"></i>
-                <h4 class="font-bold text-slate-600 dark:text-slate-300">Nenhum lançamento correspondente aos filtros</h4>
-            </div>
-
-            <div class="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-between items-center text-xs">
-                <span id="filteredRecordsText" class="text-slate-400">Mostrando 0 registros</span>
-                <span class="font-bold" id="filteredSum">R$ 0,00</span>
-            </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
     <!-- Modal de Configurações de API Key -->
     <div id="settingsModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
@@ -477,7 +529,7 @@
             <div class="flex justify-between items-start mb-4">
                 <div class="flex items-center space-x-2 text-brand-500">
                     <i data-lucide="users" class="w-5 h-5"></i>
-                    <h3 class="font-bold text-lg text-slate-900 dark:text-white">Gerenciar Perfis</h3>
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white">Seus Perfis</h3>
                 </div>
                 <button id="closeProfileModalBtn" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500">
                     <i data-lucide="x" class="w-4 h-4"></i>
@@ -488,7 +540,7 @@
             <div class="mb-5 pb-5 border-b border-slate-100 dark:border-slate-700/50">
                 <label for="newProfileNameInput" class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Novo Perfil</label>
                 <div class="flex gap-2">
-                    <input type="text" id="newProfileNameInput" placeholder="Ex: Trabalho, Casal..." class="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all text-slate-900 dark:text-white">
+                    <input type="text" id="newProfileNameInput" placeholder="Ex: Pessoal, Trabalho..." class="flex-1 px-3 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all text-slate-900 dark:text-white">
                     <button id="createProfileBtn" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-slate-900 font-bold text-xs rounded-xl transition-all">Criar</button>
                 </div>
             </div>
@@ -545,59 +597,308 @@
         </div>
     </div>
 
-    <!-- Scripts e Lógica IA -->
-    <script>
-        // Configuração de API Key do Gemini (Armazenada no localStorage de forma segura)
-        let customApiKey = localStorage.getItem('gemini_custom_api_key') || "";
+    <!-- Modal de Integração Bancária (Open Finance) -->
+    <div id="bankModal" class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-xl max-w-md w-full mx-4 transform scale-95 transition-transform duration-200">
+            <div class="flex justify-between items-start mb-2">
+                <div class="flex items-center space-x-2 text-indigo-500">
+                    <i data-lucide="landmark" class="w-6 h-6"></i>
+                    <h3 class="font-bold text-lg text-slate-900 dark:text-white">Conexão Bancária</h3>
+                </div>
+                <button id="closeBankModalBtn" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 flex items-center">
+                <i data-lucide="shield-check" class="w-4 h-4 mr-1 text-emerald-500"></i>
+                Ambiente seguro Open Finance. Selecione a instituição para sincronizar.
+            </p>
 
-        // Categorias Pré-definidas
-        const CATEGORIES_MAP = {
-            income: ["Salário", "Investimentos", "Freelancer", "Outras Receitas"],
-            expense: ["Alimentação", "Transporte", "Moradia", "Lazer", "Saúde", "Educação", "Assinaturas/Serviços", "Outros Custos"]
+            <div id="bankSelectionView" class="grid grid-cols-2 gap-3 mb-6">
+                <!-- Nubank -->
+                <button onclick="simulateBankConnection('Nubank', 'bg-purple-600', '#8b5cf6')" class="flex flex-col items-center justify-center p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-purple-500 dark:hover:border-purple-500 bg-slate-50 dark:bg-slate-900 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all group">
+                    <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center mb-2 text-white font-bold text-lg group-hover:scale-110 transition-transform shadow-lg shadow-purple-500/30">N</div>
+                    <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Nubank</span>
+                </button>
+                <!-- Itaú -->
+                <button onclick="simulateBankConnection('Itaú', 'bg-orange-500', '#f97316')" class="flex flex-col items-center justify-center p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-orange-500 dark:hover:border-orange-500 bg-slate-50 dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all group">
+                    <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center mb-2 text-white font-bold text-lg group-hover:scale-110 transition-transform shadow-lg shadow-orange-500/30">I</div>
+                    <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Itaú</span>
+                </button>
+                <!-- Bradesco -->
+                <button onclick="simulateBankConnection('Bradesco', 'bg-red-600', '#dc2626')" class="flex flex-col items-center justify-center p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-red-500 dark:hover:border-red-500 bg-slate-50 dark:bg-slate-900 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all group">
+                    <div class="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center mb-2 text-white font-bold text-lg group-hover:scale-110 transition-transform shadow-lg shadow-red-500/30">B</div>
+                    <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Bradesco</span>
+                </button>
+                <!-- Inter -->
+                <button onclick="simulateBankConnection('Inter', 'bg-orange-400', '#fb923c')" class="flex flex-col items-center justify-center p-4 border border-slate-200 dark:border-slate-700 rounded-xl hover:border-orange-400 dark:hover:border-orange-400 bg-slate-50 dark:bg-slate-900 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all group">
+                    <div class="w-10 h-10 rounded-full bg-orange-400 flex items-center justify-center mb-2 text-white font-bold text-lg group-hover:scale-110 transition-transform shadow-lg shadow-orange-400/30">in</div>
+                    <span class="text-xs font-semibold text-slate-700 dark:text-slate-300">Banco Inter</span>
+                </button>
+            </div>
+
+            <!-- Tela de Processamento -->
+            <div id="bankLoadingView" class="hidden flex-col items-center justify-center py-8 text-center">
+                <div class="relative w-16 h-16 mb-4">
+                    <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-700 rounded-full"></div>
+                    <div id="bankSpinner" class="absolute inset-0 border-4 border-brand-500 rounded-full border-t-transparent animate-spin"></div>
+                    <i data-lucide="arrow-down-to-line" class="absolute inset-0 m-auto w-6 h-6 text-slate-400 animate-pulse"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 dark:text-white" id="bankConnectingTitle">Conectando...</h4>
+                <p class="text-xs text-slate-500 mt-2 max-w-[200px] mx-auto">Sincronizando as últimas transações de forma segura.</p>
+            </div>
+
+            <div class="flex justify-end mt-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <button id="closeBankModalBtn2" class="px-5 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 transition-colors">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPORTAÇÕES E CONFIGURAÇÕES DO FIREBASE (Sincronização em Nuvem) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Recuperar Configurações Injetadas pelo Canvas ou usar fallback de demonstração
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'financasmax-pwa';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : {
+                apiKey: "demo-api-key-placeholder",
+                authDomain: "demo.firebaseapp.com",
+                projectId: "demo-project",
+                storageBucket: "demo.appspot.com",
+                messagingSenderId: "123456789",
+                appId: "1:123456789:web:demo"
+              };
+
+        // Iniciar Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Estado do Usuário e Lançamentos
+        let currentUser = null;
+        let activeProfileId = 'pessoal';
+        let profiles = [];
+        let transactions = [];
+        let currentAuthTab = 'login'; // login ou register
+
+        // Elementos de UI
+        const authScreen = document.getElementById('authScreen');
+        const appScreen = document.getElementById('appScreen');
+        const authForm = document.getElementById('authForm');
+        const tabLogin = document.getElementById('tabLogin');
+        const tabRegister = document.getElementById('tabRegister');
+        const authEmail = document.getElementById('authEmail');
+        const authPassword = document.getElementById('authPassword');
+        const authSubmitText = document.getElementById('authSubmitText');
+        const authSubmitIcon = document.getElementById('authSubmitIcon');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // --- SISTEMA DE DIÁLOGO DE CONFIRMAÇÃO CUSTOMIZADO (iOS Safari Friendly) ---
+        let confirmActionCallback = null;
+        window.triggerCustomConfirm = function(title, description, onConfirm) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalDesc').textContent = description;
+            confirmActionCallback = onConfirm;
+
+            const modal = document.getElementById('customConfirmModal');
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.add('scale-100');
         };
 
-        // Estado dos Perfis
-        let profiles = JSON.parse(localStorage.getItem('financas_profiles')) || [
-            { id: 'pessoal', name: 'Pessoal' }
-        ];
-        let activeProfileId = localStorage.getItem('financas_active_profile') || 'pessoal';
+        const closeConfirmModal = () => {
+            const modal = document.getElementById('customConfirmModal');
+            modal.classList.add('pointer-events-none', 'opacity-0');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+            confirmActionCallback = null;
+        };
 
-        // Estado das Transações
-        let transactions = [];
+        document.getElementById('confirmNoBtn').addEventListener('click', closeConfirmModal);
+        document.getElementById('confirmYesBtn').addEventListener('click', () => {
+            if (confirmActionCallback) confirmActionCallback();
+            closeConfirmModal();
+        });
+
+
+        // --- FLUXO DE AUTENTICAÇÃO ---
+        
+        // Alternar Tabs de Auth
+        tabLogin.addEventListener('click', () => switchAuthTab('login'));
+        tabRegister.addEventListener('click', () => switchAuthTab('register'));
+
+        function switchAuthTab(tab) {
+            currentAuthTab = tab;
+            if (tab === 'login') {
+                tabLogin.className = "py-2 text-xs font-bold rounded-lg bg-brand-500 text-slate-950 transition-all";
+                tabRegister.className = "py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all";
+                authSubmitText.textContent = "Entrar no Aplicativo";
+                authSubmitIcon.setAttribute('data-lucide', 'arrow-right');
+            } else {
+                tabRegister.className = "py-2 text-xs font-bold rounded-lg bg-brand-500 text-slate-950 transition-all";
+                tabLogin.className = "py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all";
+                authSubmitText.textContent = "Criar Minha Conta Grátis";
+                authSubmitIcon.setAttribute('data-lucide', 'user-plus');
+            }
+            lucide.createIcons();
+        }
+
+        // Submissão do Formulário de Auth
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = authEmail.value.trim();
+            const password = authPassword.value;
+
+            setAuthLoading(true);
+
+            try {
+                if (currentAuthTab === 'login') {
+                    // Login com E-mail e Senha
+                    await signInWithEmailAndPassword(auth, email, password);
+                    triggerToast("Bem-vindo de volta ao FinançasMax!");
+                } else {
+                    // Cadastro Novo Usuário
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    triggerToast("Conta criada com sucesso! Iniciando seu caixa.");
+                }
+            } catch (err) {
+                console.error("Erro na autenticação:", err);
+                let userFriendlyMessage = "Erro ao autenticar. Verifique seus dados.";
+                if (err.code === "auth/email-already-in-use") userFriendlyMessage = "E-mail já cadastrado.";
+                if (err.code === "auth/invalid-credential") userFriendlyMessage = "E-mail ou senha incorretos.";
+                if (err.code === "auth/weak-password") userFriendlyMessage = "Sua senha deve ter pelo menos 6 dígitos.";
+                
+                triggerToast(userFriendlyMessage, false);
+            } finally {
+                setAuthLoading(false);
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            window.triggerCustomConfirm(
+                "Sair do Aplicativo", 
+                "Tem certeza que deseja fechar a sua sessão ativa neste iPhone?", 
+                () => {
+                    signOut(auth);
+                    triggerToast("Sessão finalizada.");
+                }
+            );
+        });
+
+        function setAuthLoading(loading) {
+            const btn = authForm.querySelector('button[type="submit"]');
+            if (loading) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+                authSubmitIcon.setAttribute('data-lucide', 'loader-2');
+                authSubmitIcon.classList.add('animate-spin');
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                authSubmitIcon.classList.remove('animate-spin');
+                if (currentAuthTab === 'login') {
+                    authSubmitIcon.setAttribute('data-lucide', 'arrow-right');
+                } else {
+                    authSubmitIcon.setAttribute('data-lucide', 'user-plus');
+                }
+            }
+            lucide.createIcons();
+        }
+
+        // --- ESCUTA DO ESTADO DE AUTENTICAÇÃO E ATIVAÇÃO DO BANCO DE DADOS (FIRESTORE) ---
+        let unsubProfiles = null;
+        let unsubTransactions = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                authScreen.classList.add('hidden');
+                appScreen.classList.remove('hidden');
+                
+                // Conectar e sincronizar as coleções seguindo a RULE 1: /artifacts/{appId}/users/{userId}/{collectionName}
+                const userId = user.uid;
+                
+                // 1. Sincronização de Perfis
+                const profilesCollection = collection(db, 'artifacts', appId, 'users', userId, 'profiles');
+                unsubProfiles = onSnapshot(profilesCollection, async (snapshot) => {
+                    profiles = [];
+                    snapshot.forEach(doc => {
+                        profiles.push({ firestoreId: doc.id, ...doc.data() });
+                    });
+
+                    // Se for um novo usuário e não tiver nenhum perfil criado, inicia o perfil "Pessoal" padrão
+                    if (profiles.length === 0) {
+                        await addDoc(profilesCollection, {
+                            id: 'pessoal',
+                            name: 'Pessoal'
+                        });
+                        activeProfileId = 'pessoal';
+                    } else {
+                        // Verifica se o perfil ativo atual ainda existe, senão adota o primeiro disponível
+                        if (!profiles.some(p => p.id === activeProfileId)) {
+                            activeProfileId = profiles[0].id;
+                        }
+                    }
+                    renderProfiles();
+                    render();
+                }, (error) => {
+                    console.error("Erro ao sincronizar perfis:", error);
+                });
+
+                // 2. Sincronização de Lançamentos (Transactions)
+                const transactionsCollection = collection(db, 'artifacts', appId, 'users', userId, 'transactions');
+                unsubTransactions = onSnapshot(transactionsCollection, (snapshot) => {
+                    transactions = [];
+                    snapshot.forEach(doc => {
+                        transactions.push({ firestoreId: doc.id, ...doc.data() });
+                    });
+                    render();
+                }, (error) => {
+                    console.error("Erro ao sincronizar lançamentos:", error);
+                });
+
+            } else {
+                // Usuário deslogou ou não está autenticado
+                currentUser = null;
+                authScreen.classList.remove('hidden');
+                appScreen.classList.add('hidden');
+
+                // Cancelar observadores anteriores de banco de dados
+                if (unsubProfiles) unsubProfiles();
+                if (unsubTransactions) unsubTransactions();
+
+                profiles = [];
+                transactions = [];
+                renderProfiles();
+                render();
+            }
+        });
+
+
+        // -------------------------------------------------------------
+        // PARTE 2: GESTÃO GERAL DA INTERFACE FINANCEIRA E DA IA (GEMINI)
+        // -------------------------------------------------------------
+
+        let customApiKey = localStorage.getItem('gemini_custom_api_key') || "";
         let myChart = null;
         let selectedInputTab = "text"; 
 
-        // Estado do Gravador de Voz
+        // Gravador de Voz
         let mediaRecorder;
         let audioChunks = [];
         let isRecording = false;
 
-        // Dados de arquivo carregado (base64)
+        // Arquivo Carregado
         let loadedFileBase64 = "";
         let loadedFileMime = "";
 
-        // Garante integridade do perfil ativo
-        if (!profiles.some(p => p.id === activeProfileId)) {
-            activeProfileId = profiles[0].id;
-            localStorage.setItem('financas_active_profile', activeProfileId);
-        }
-
-        // Recuperar lista do localStorage
-        const savedData = localStorage.getItem('financas_max_transactions_v2');
-        if (savedData) {
-            transactions = JSON.parse(savedData);
-            // Migração de transações antigas sem profileId para o perfil padrão 'pessoal'
-            transactions = transactions.map(t => {
-                if (!t.profileId) t.profileId = 'pessoal';
-                return t;
-            });
-            localStorage.setItem('financas_max_transactions_v2', JSON.stringify(transactions));
-        } else {
-            transactions = [];
-            localStorage.setItem('financas_max_transactions_v2', JSON.stringify([]));
-        }
-
-        // Seletores do DOM
+        // Seletores do DOM Financeiro
         const transactionForm = document.getElementById('transactionForm');
         const descriptionInput = document.getElementById('description');
         const amountInput = document.getElementById('amount');
@@ -625,14 +926,13 @@
         const transactionList = document.getElementById('transactionList');
         const noDataState = document.getElementById('noDataState');
 
-        // Seletores das Abas de IA
+        // Central de IA
         const tabText = document.getElementById('tabText');
         const tabImage = document.getElementById('tabImage');
         const tabVoice = document.getElementById('tabVoice');
         const areaText = document.getElementById('areaText');
         const areaImage = document.getElementById('areaImage');
         const areaVoice = document.getElementById('areaVoice');
-
         const aiTextInput = document.getElementById('aiTextInput');
         const fileInput = document.getElementById('fileInput');
         const uploadPlaceholder = document.getElementById('uploadPlaceholder');
@@ -641,11 +941,9 @@
         const previewName = document.getElementById('previewName');
         const previewSize = document.getElementById('previewSize');
         const removeFileBtn = document.getElementById('removeFileBtn');
-
         const voiceRecordBtn = document.getElementById('voiceRecordBtn');
         const voiceStatus = document.getElementById('voiceStatus');
         const micIcon = document.getElementById('micIcon');
-
         const processAiBtn = document.getElementById('processAiBtn');
         const aiBtnText = document.getElementById('aiBtnText');
         const aiBtnIcon = document.getElementById('aiBtnIcon');
@@ -658,16 +956,24 @@
         const saveSettingsBtn = document.getElementById('saveSettingsBtn');
         const apiKeyInput = document.getElementById('apiKeyInput');
         const apiAlert = document.getElementById('apiAlert');
-
         const whatsappGuideBtn = document.getElementById('whatsappGuideBtn');
         const whatsappModal = document.getElementById('whatsappModal');
         const closeWhatsappModalBtn = document.getElementById('closeWhatsappModalBtn');
         const closeWhatsappModalBtn2 = document.getElementById('closeWhatsappModalBtn2');
-
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = document.getElementById('themeIcon');
 
-        // Perfis DOM Selectors
+        // Modal de Sincronização Bancária
+        const bankSyncBtn = document.getElementById('bankSyncBtn');
+        const bankModal = document.getElementById('bankModal');
+        const closeBankModalBtn = document.getElementById('closeBankModalBtn');
+        const closeBankModalBtn2 = document.getElementById('closeBankModalBtn2');
+        const bankSelectionView = document.getElementById('bankSelectionView');
+        const bankLoadingView = document.getElementById('bankLoadingView');
+        const bankConnectingTitle = document.getElementById('bankConnectingTitle');
+        const bankSpinner = document.getElementById('bankSpinner');
+
+        // Perfis Selectores
         const profileSwitcher = document.getElementById('profileSwitcher');
         const manageProfilesBtn = document.getElementById('manageProfilesBtn');
         const profileModal = document.getElementById('profileModal');
@@ -677,16 +983,142 @@
         const createProfileBtn = document.getElementById('createProfileBtn');
         const profileListContainer = document.getElementById('profileListContainer');
 
-        // Configurar a data do formulário para hoje
         dateInput.value = new Date().toISOString().split('T')[0];
 
-        // Se já tiver uma chave API salva, oculta o aviso e preenche o input das configurações
         if (customApiKey) {
             apiKeyInput.value = customApiKey;
             apiAlert.classList.add('hidden');
         }
 
-        // Alternar visual do rádio de tipo no Formulário manual
+        // --- GESTÃO DE PERFIS INDIVIDUAIS POR PESSOA ---
+        function renderProfiles() {
+            profileSwitcher.innerHTML = '';
+            profiles.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.name;
+                if (p.id === activeProfileId) {
+                    opt.selected = true;
+                }
+                profileSwitcher.appendChild(opt);
+            });
+
+            const activeP = profiles.find(p => p.id === activeProfileId);
+            if (activeP) {
+                summaryProfileName.textContent = activeP.name;
+            } else {
+                summaryProfileName.textContent = "Pessoal";
+            }
+
+            profileListContainer.innerHTML = '';
+            profiles.forEach(p => {
+                const item = document.createElement('div');
+                item.className = "flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs";
+                
+                const isSelected = p.id === activeProfileId;
+                const totalCount = transactions.filter(t => (t.profileId || 'pessoal') === p.id).length;
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-brand-500 animate-pulse' : 'bg-slate-300 dark:bg-slate-700'}"></span>
+                        <div class="text-left">
+                            <p class="font-bold text-slate-800 dark:text-slate-100 ${isSelected ? 'text-brand-500 dark:text-brand-400' : ''}">${p.name}</p>
+                            <p class="text-[10px] text-slate-400">${totalCount} lançamentos</p>
+                        </div>
+                    </div>
+                    ${profiles.length > 1 ? `
+                        <button onclick="deleteProfile('${p.id}', '${p.firestoreId}')" class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    ` : ''}
+                `;
+                profileListContainer.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        // Criar Perfil no Firestore (RULE 1)
+        createProfileBtn.addEventListener('click', async () => {
+            const name = newProfileNameInput.value.trim();
+            if (!name || !currentUser) {
+                triggerToast("Digite um nome de perfil válido", false);
+                return;
+            }
+
+            try {
+                const profilesCollection = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'profiles');
+                const newId = crypto.randomUUID();
+                await addDoc(profilesCollection, {
+                    id: newId,
+                    name: name
+                });
+                activeProfileId = newId;
+                newProfileNameInput.value = '';
+                triggerToast(`Perfil "${name}" criado com sucesso!`);
+            } catch (err) {
+                console.error("Erro ao criar perfil:", err);
+                triggerToast("Erro ao criar perfil.", false);
+            }
+        });
+
+        // Apagar Perfil no Firestore (RULE 1)
+        window.deleteProfile = function(id, firestoreId) {
+            const profileToDelete = profiles.find(p => p.id === id);
+            if (!profileToDelete || !currentUser) return;
+
+            window.triggerCustomConfirm(
+                "Excluir Perfil", 
+                `Tem certeza que deseja apagar o perfil "${profileToDelete.name}"? Todos os lançamentos dele serão excluídos.`, 
+                async () => {
+                    try {
+                        const userId = currentUser.uid;
+                        
+                        // Apagar documento do Perfil
+                        await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'profiles', firestoreId));
+                        
+                        // Apagar transações associadas
+                        const txsCollection = collection(db, 'artifacts', appId, 'users', userId, 'transactions');
+                        const txsSnapshot = await getDocs(txsCollection);
+                        txsSnapshot.forEach(async (txDoc) => {
+                            if (txDoc.data().profileId === id) {
+                                await deleteDoc(doc(db, 'artifacts', appId, 'users', userId, 'transactions', txDoc.id));
+                            }
+                        });
+
+                        triggerToast(`Perfil "${profileToDelete.name}" removido.`);
+                    } catch (err) {
+                        console.error("Erro ao deletar perfil:", err);
+                        triggerToast("Erro ao remover o perfil.", false);
+                    }
+                }
+            );
+        };
+
+        // Alternar Perfil no Cabeçalho
+        profileSwitcher.addEventListener('change', (e) => {
+            activeProfileId = e.target.value;
+            renderProfiles();
+            render();
+            triggerToast("Alterado para: " + profiles.find(p => p.id === activeProfileId).name);
+        });
+
+        manageProfilesBtn.addEventListener('click', () => {
+            profileModal.classList.remove('pointer-events-none', 'opacity-0');
+            profileModal.querySelector('div').classList.remove('scale-95');
+            profileModal.querySelector('div').classList.add('scale-100');
+            renderProfiles();
+        });
+
+        const closeProfileModal = () => {
+            profileModal.classList.add('pointer-events-none', 'opacity-0');
+            profileModal.querySelector('div').classList.remove('scale-100');
+            profileModal.querySelector('div').classList.add('scale-95');
+        };
+
+        closeProfileModalBtn.addEventListener('click', closeProfileModal);
+        closeProfileModalBtn2.addEventListener('click', closeProfileModal);
+
+        // --- SISTEMA MANUAL DE LANÇAMENTO ---
         function updateManualFormUI() {
             if (typeIncomeRadio.checked) {
                 incomeLabel.className = "relative flex items-center justify-center py-2 px-3 rounded-xl border-2 border-emerald-500 cursor-pointer transition-all bg-emerald-50/20 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400";
@@ -724,167 +1156,64 @@
 
         typeIncomeRadio.addEventListener('change', updateManualFormUI);
         typeExpenseRadio.addEventListener('change', updateManualFormUI);
-
-        // Inicializar Categorias
         updateManualFormUI();
         populateFilterCategories();
 
-        // Salvar localmente as transações
-        function saveToLocalStorage() {
-            localStorage.setItem('financas_max_transactions_v2', JSON.stringify(transactions));
-        }
+        // Inserir Transação Manual no Firestore (RULE 1)
+        transactionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = typeIncomeRadio.checked ? 'income' : 'expense';
+            const desc = descriptionInput.value.trim();
+            const val = parseFloat(amountInput.value);
+            const dt = dateInput.value;
+            const cat = categorySelect.value;
 
-        // Salvar os perfis
-        function saveProfilesToLocalStorage() {
-            localStorage.setItem('financas_profiles', JSON.stringify(profiles));
-            localStorage.setItem('financas_active_profile', activeProfileId);
-        }
-
-        // Formatação Monetária
-        function formatCurrency(val) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-        }
-
-        // Toast de aviso
-        function triggerToast(message, isSuccess = true) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMessage');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMsg.textContent = message;
-            toastIcon.innerHTML = isSuccess 
-                ? `<i data-lucide="check" class="w-4 h-4 text-emerald-500"></i>`
-                : `<i data-lucide="alert-circle" class="w-4 h-4 text-rose-500"></i>`;
-            lucide.createIcons();
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-                toast.classList.remove('translate-y-0', 'opacity-100');
-            }, 3000);
-        }
-
-        // --- GERENCIAMENTO DE PERFIS ---
-        function renderProfiles() {
-            // Preencher switcher no cabeçalho
-            profileSwitcher.innerHTML = '';
-            profiles.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.id;
-                opt.textContent = p.name;
-                if (p.id === activeProfileId) {
-                    opt.selected = true;
-                }
-                profileSwitcher.appendChild(opt);
-            });
-
-            // Atualizar título do Resumo
-            const activeP = profiles.find(p => p.id === activeProfileId);
-            if (activeP) {
-                summaryProfileName.textContent = activeP.name;
-            }
-
-            // Preencher lista dentro do Modal de Gerenciamento
-            profileListContainer.innerHTML = '';
-            profiles.forEach(p => {
-                const item = document.createElement('div');
-                item.className = "flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-xs";
-                
-                const isSelected = p.id === activeProfileId;
-                const totalCount = transactions.filter(t => (t.profileId || 'pessoal') === p.id).length;
-
-                item.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <span class="w-2 h-2 rounded-full ${isSelected ? 'bg-brand-500 animate-pulse' : 'bg-slate-300 dark:bg-slate-700'}"></span>
-                        <div class="text-left">
-                            <p class="font-bold text-slate-800 dark:text-slate-100 ${isSelected ? 'text-brand-500 dark:text-brand-400' : ''}">${p.name}</p>
-                            <p class="text-[10px] text-slate-400">${totalCount} lançamentos</p>
-                        </div>
-                    </div>
-                    ${profiles.length > 1 ? `
-                        <button onclick="deleteProfile('${p.id}')" class="p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-colors" title="Apagar perfil e todas as contas dele">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    ` : ''}
-                `;
-                profileListContainer.appendChild(item);
-            });
-            lucide.createIcons();
-        }
-
-        // Criar Perfil
-        createProfileBtn.addEventListener('click', () => {
-            const name = newProfileNameInput.value.trim();
-            if (!name) {
-                triggerToast("Digite um nome de perfil válido", false);
+            if (!desc || isNaN(val) || val <= 0 || !dt || !cat || !currentUser) {
+                triggerToast("Dados incorretos ou em branco", false);
                 return;
             }
-            const id = crypto.randomUUID();
-            profiles.push({ id, name });
-            activeProfileId = id; // Alterna automaticamente para o novo perfil
-            saveProfilesToLocalStorage();
-            newProfileNameInput.value = '';
-            renderProfiles();
-            render();
-            triggerToast(`Perfil "${name}" criado com sucesso!`);
-        });
 
-        // Apagar Perfil
-        window.deleteProfile = function(id) {
-            const profileToDelete = profiles.find(p => p.id === id);
-            if (!profileToDelete) return;
+            try {
+                const txsCollection = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'transactions');
+                await addDoc(txsCollection, {
+                    type: type,
+                    description: desc,
+                    amount: val,
+                    date: dt,
+                    category: cat,
+                    profileId: activeProfileId
+                });
 
-            if (confirm(`Atenção: Ao excluir o perfil "${profileToDelete.name}", TODOS os lançamentos dele serão apagados permanentemente. Deseja continuar?`)) {
-                // Remove transações
-                transactions = transactions.filter(t => (t.profileId || 'pessoal') !== id);
-                // Remove perfil
-                profiles = profiles.filter(p => p.id !== id);
-                
-                // Se o ativo foi removido, altera para o primeiro restante
-                if (activeProfileId === id) {
-                    activeProfileId = profiles[0].id;
-                }
-
-                saveToLocalStorage();
-                saveProfilesToLocalStorage();
-                renderProfiles();
-                render();
-                triggerToast(`Perfil e seus lançamentos removidos.`, false);
+                descriptionInput.value = '';
+                amountInput.value = '';
+                triggerToast("Lançamento inserido com sucesso!");
+            } catch (err) {
+                console.error("Erro ao salvar transação:", err);
+                triggerToast("Erro ao inserir transação.", false);
             }
-        };
-
-        // Alternar Perfil
-        profileSwitcher.addEventListener('change', (e) => {
-            activeProfileId = e.target.value;
-            saveProfilesToLocalStorage();
-            renderProfiles();
-            render();
-            triggerToast("Alterado para perfil: " + profiles.find(p => p.id === activeProfileId).name);
         });
 
-        // Controles de Abrir e Fechar o Modal de Perfis
-        manageProfilesBtn.addEventListener('click', () => {
-            profileModal.classList.remove('pointer-events-none', 'opacity-0');
-            profileModal.querySelector('div').classList.remove('scale-95');
-            profileModal.querySelector('div').classList.add('scale-100');
-            renderProfiles();
-        });
-
-        const closeProfileModal = () => {
-            profileModal.classList.add('pointer-events-none', 'opacity-0');
-            profileModal.querySelector('div').classList.remove('scale-100');
-            profileModal.querySelector('div').classList.add('scale-95');
+        // Excluir Transação do Firestore (RULE 1)
+        window.deleteTransaction = function(firestoreId) {
+            if (!currentUser) return;
+            window.triggerCustomConfirm(
+                "Remover Lançamento", 
+                "Deseja realmente apagar esta transação do banco de dados?", 
+                async () => {
+                    try {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'transactions', firestoreId));
+                        triggerToast("Lançamento deletado.");
+                    } catch (err) {
+                        console.error("Erro ao deletar lançamento:", err);
+                        triggerToast("Erro ao deletar transação.", false);
+                    }
+                }
+            );
         };
 
-        closeProfileModalBtn.addEventListener('click', closeProfileModal);
-        closeProfileModalBtn2.addEventListener('click', closeProfileModal);
-
-        // Controle de Abas da Central de IA
+        // --- PROCESSAMENTO INTELIGENTE DE IA (GEMINI) ---
         function switchAITab(tab) {
             selectedInputTab = tab;
-            
             const tabs = [tabText, tabImage, tabVoice];
             tabs.forEach(t => {
                 t.className = "py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition-all flex items-center justify-center space-x-1.5";
@@ -910,7 +1239,6 @@
         tabImage.addEventListener('click', () => switchAITab('image'));
         tabVoice.addEventListener('click', () => switchAITab('voice'));
 
-        // Upload de Imagens da Nota Fiscal
         fileInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -940,7 +1268,6 @@
             previewImg.src = "";
         });
 
-        // Gravação de Áudio via Web Audio API
         voiceRecordBtn.addEventListener('click', async () => {
             if (!isRecording) {
                 try {
@@ -948,31 +1275,28 @@
                     mediaRecorder = new MediaRecorder(stream);
                     audioChunks = [];
 
-                    mediaRecorder.ondataavailable = (event) => {
-                        audioChunks.push(event.data);
-                    };
-
+                    mediaRecorder.ondataavailable = (event) => { audioChunks.push(event.data); };
                     mediaRecorder.onstop = async () => {
                         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
                         const reader = new FileReader();
                         reader.onloadend = () => {
                             loadedFileBase64 = reader.result.split(',')[1];
                             loadedFileMime = 'audio/wav';
-                            voiceStatus.textContent = "Áudio capturado! Agora, clique em 'Interpretar e Lançar'.";
+                            voiceStatus.textContent = "Áudio capturado com sucesso! Agora, clique em 'Interpretar e Lançar'.";
                         };
                         reader.readAsDataURL(audioBlob);
                     };
 
                     mediaRecorder.start();
                     isRecording = true;
-                    voiceStatus.textContent = "Gravando áudio... Clique de novo para parar.";
+                    voiceStatus.textContent = "Gravando áudio... Toque novamente para parar.";
                     voiceRecordBtn.classList.add('bg-emerald-600', 'animate-pulse');
                     voiceRecordBtn.classList.remove('bg-rose-600');
                     micIcon.setAttribute('data-lucide', 'square');
                     lucide.createIcons();
                 } catch (err) {
-                    console.error("Acesso de microfone negado ou erro:", err);
-                    triggerToast("Não conseguimos acessar seu microfone. Dê permissão nas configurações do iOS.", false);
+                    console.error("Microfone inacessível:", err);
+                    triggerToast("Não conseguimos acessar seu microfone.", false);
                 }
             } else {
                 mediaRecorder.stop();
@@ -984,31 +1308,29 @@
             }
         });
 
-        // Chamada à API Oficial do Gemini para estruturação de dados (gemini-2.5-flash)
+        // Chamada direta à API Oficial do Gemini 2.5 Flash
         async function callGeminiApi(prompt, systemPrompt, optionalFile = null) {
             let retries = 5;
             let delay = 1000;
             const currentKey = customApiKey;
 
             if (!currentKey) {
-                throw new Error("Chave API do Gemini ausente. Adicione uma nas configurações.");
+                throw new Error("Chave API do Gemini ausente. Configure-a no menu ⚙️.");
             }
 
             const payload = {
                 contents: [],
-                systemInstruction: {
-                    parts: [{ text: systemPrompt }]
-                },
+                systemInstruction: { parts: [{ text: systemPrompt }] },
                 generationConfig: {
                     responseMimeType: "application/json",
                     responseSchema: {
                         type: "OBJECT",
                         properties: {
-                            type: { type: "STRING", enum: ["income", "expense"], description: "Indica se é receita ou despesa." },
-                            description: { type: "STRING", description: "Descrição curta e clara do lançamento." },
-                            amount: { type: "NUMBER", description: "Valor do lançamento." },
-                            category: { type: "STRING", description: "Mapeamento em uma das categorias predefinidas mais adequada." },
-                            date: { type: "STRING", description: "Data no formato YYYY-MM-DD. Caso não seja possível identificar no contexto, adote o dia atual." }
+                            type: { type: "STRING", enum: ["income", "expense"] },
+                            description: { type: "STRING" },
+                            amount: { type: "NUMBER" },
+                            category: { type: "STRING" },
+                            date: { type: "STRING" }
                         },
                         required: ["type", "description", "amount", "category", "date"]
                     }
@@ -1020,10 +1342,7 @@
 
             if (optionalFile) {
                 parts.unshift({
-                    inlineData: {
-                        mimeType: optionalFile.mime,
-                        data: optionalFile.base64
-                    }
+                    inlineData: { mimeType: optionalFile.mime, data: optionalFile.base64 }
                 });
             }
 
@@ -1037,13 +1356,9 @@
                         body: JSON.stringify(payload)
                     });
 
-                    if (!response.ok) {
-                        throw new Error(`Erro na chamada da API: ${response.status}`);
-                    }
-
+                    if (!response.ok) throw new Error(`Erro na API Gemini: ${response.status}`);
                     const data = await response.json();
-                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                    return JSON.parse(text);
+                    return JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text);
                 } catch (e) {
                     retries--;
                     if (retries === 0) throw e;
@@ -1053,19 +1368,19 @@
             }
         }
 
-        // Processar Entrada de IA
+        // Submeter Inteligência Artificial
         processAiBtn.addEventListener('click', async () => {
             if (!customApiKey) {
-                triggerToast("Adicione sua chave API nas configurações primeiro!", false);
+                triggerToast("Adicione sua chave API nas configurações do app!", false);
                 openSettings();
                 return;
             }
 
             setAiLoading(true);
 
-            const systemPrompt = `Você é o assistente financeiro do Max. 
+            const systemPrompt = `Você é o assistente financeiro inteligente do FinançasMax. 
             Identifique os dados da transação do texto, cupom fiscal ou gravação de voz.
-            Você deve selecionar OBRIGATORIAMENTE uma das seguintes categorias:
+            Mapeie o lançamento estritamente para uma dessas categorias:
             Para receitas (income): ["Salário", "Investimentos", "Freelancer", "Outras Receitas"].
             Para despesas (expense): ["Alimentação", "Transporte", "Moradia", "Lazer", "Saúde", "Educação", "Assinaturas/Serviços", "Outros Custos"].
             A data atual do lançamento é ${new Date().toISOString().split('T')[0]}.`;
@@ -1083,11 +1398,11 @@
                 prompt = textVal;
             } else if (selectedInputTab === 'image') {
                 if (!loadedFileBase64) {
-                    triggerToast("Carregue uma imagem do seu comprovante ou nota!", false);
+                    triggerToast("Carregue uma imagem do seu comprovante!", false);
                     setAiLoading(false);
                     return;
                 }
-                prompt = "Leia este cupom ou nota e localize o valor total pago, o nome do estabelecimento e a categoria mais próxima das que permitimos.";
+                prompt = "Leia este cupom e localize o valor total pago, o nome do estabelecimento e a categoria correta.";
                 fileObj = { base64: loadedFileBase64, mime: loadedFileMime };
             } else if (selectedInputTab === 'voice') {
                 if (!loadedFileBase64) {
@@ -1102,23 +1417,17 @@
             try {
                 const result = await callGeminiApi(prompt, systemPrompt, fileObj);
                 
-                if (result && result.amount) {
-                    const newTx = {
-                        id: crypto.randomUUID(),
+                if (result && result.amount && currentUser) {
+                    const txsCollection = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'transactions');
+                    await addDoc(txsCollection, {
                         type: result.type,
                         description: result.description,
                         amount: parseFloat(result.amount),
                         date: result.date || new Date().toISOString().split('T')[0],
                         category: result.category,
-                        profileId: activeProfileId // Vincula ao perfil ativo
-                    };
+                        profileId: activeProfileId
+                    });
 
-                    transactions.push(newTx);
-                    saveToLocalStorage();
-                    renderProfiles();
-                    render();
-
-                    // Limpar campos de IA
                     aiTextInput.value = '';
                     loadedFileBase64 = "";
                     loadedFileMime = "";
@@ -1127,9 +1436,9 @@
                     uploadPreview.classList.add('hidden');
                     voiceStatus.textContent = "Toque para começar a falar";
 
-                    triggerToast(`Lançamento identificado: "${newTx.description}" (${formatCurrency(newTx.amount)}) adicionado!`);
+                    triggerToast(`IA Identificou: "${result.description}" (${formatCurrency(result.amount)}) adicionado!`);
                 } else {
-                    triggerToast("Não conseguimos compreender a transação. Tente novamente.", false);
+                    triggerToast("Não conseguimos compreender os dados da nota. Tente novamente.", false);
                 }
             } catch (err) {
                 console.error(err);
@@ -1156,52 +1465,9 @@
             lucide.createIcons();
         }
 
-        // Lançamento Manual Form
-        transactionForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const type = typeIncomeRadio.checked ? 'income' : 'expense';
-            const desc = descriptionInput.value.trim();
-            const val = parseFloat(amountInput.value);
-            const dt = dateInput.value;
-            const cat = categorySelect.value;
-
-            if (!desc || isNaN(val) || val <= 0 || !dt || !cat) {
-                triggerToast("Dados incorretos ou em branco", false);
-                return;
-            }
-
-            const newTx = {
-                id: crypto.randomUUID(),
-                type: type,
-                description: desc,
-                amount: val,
-                date: dt,
-                category: cat,
-                profileId: activeProfileId // Vincula ao perfil ativo
-            };
-
-            transactions.push(newTx);
-            saveToLocalStorage();
-            renderProfiles();
-            render();
-
-            descriptionInput.value = '';
-            amountInput.value = '';
-            triggerToast("Lançamento inserido!");
-        });
-
-        // Deletar lançamento
-        window.deleteTransaction = function(id) {
-            transactions = transactions.filter(t => t.id !== id);
-            saveToLocalStorage();
-            renderProfiles();
-            render();
-            triggerToast("Lançamento deletado.", false);
-        };
-
-        // Render Geral da Tabela, Filtros e Somatório (Filtrados pelo Perfil Ativo)
+        // --- RENDERIZAÇÃO GERAL (Tabelas, Relatórios e Filtros) ---
         function render() {
-            // Separa apenas os dados do Perfil Ativo
+            // Filtrar apenas dados do perfil ativo atual
             const profileTransactions = transactions.filter(t => (t.profileId || 'pessoal') === activeProfileId);
 
             const query = filterSearch.value.toLowerCase().trim();
@@ -1221,14 +1487,10 @@
                 return matchesText && matchesType && matchesCat && matchesDate;
             });
 
-            // Ordenar da mais recente primeiro
             filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             // Indicadores de Saldo do Perfil Ativo
-            let bal = 0;
-            let inc = 0;
-            let exp = 0;
-
+            let bal = 0, inc = 0, exp = 0;
             profileTransactions.forEach(t => {
                 if (t.type === 'income') inc += t.amount;
                 else exp += t.amount;
@@ -1240,7 +1502,6 @@
             totalExpensesEls.forEach(el => el.textContent = formatCurrency(exp));
             txCountEl.textContent = `${profileTransactions.length} lançamento(s)`;
 
-            // Somatório visível filtrado
             let fSum = 0;
             filtered.forEach(t => {
                 if (t.type === 'income') fSum += t.amount;
@@ -1250,7 +1511,6 @@
             filteredSumEl.className = fSum >= 0 ? "font-bold text-emerald-600 dark:text-emerald-400" : "font-bold text-rose-600 dark:text-rose-400";
             filteredRecordsText.textContent = `Mostrando ${filtered.length} registro(s) filtrados`;
 
-            // Listagem de linhas na tabela
             transactionList.innerHTML = '';
             if (filtered.length === 0) {
                 noDataState.classList.remove('hidden');
@@ -1282,7 +1542,7 @@
                             ${isInc ? '+' : '-'} ${formatCurrency(t.amount)}
                         </td>
                         <td class="px-6 py-3 text-center whitespace-nowrap">
-                            <button onclick="deleteTransaction('${t.id}')" class="p-1 text-slate-400 hover:text-rose-500 rounded hover:bg-rose-50 dark:hover:bg-rose-950/20 opacity-0 group-hover:opacity-100 transition-all">
+                            <button onclick="deleteTransaction('${t.firestoreId}')" class="p-1 text-slate-400 hover:text-rose-500 rounded hover:bg-rose-50 dark:hover:bg-rose-950/20 opacity-0 group-hover:opacity-100 transition-all">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </td>
@@ -1295,7 +1555,7 @@
             lucide.createIcons();
         }
 
-        // Gráfico de Pizza dinâmico do Perfil Ativo
+        // Gráficos de Análise de Categoria
         function updateChart(filteredData) {
             const counts = {};
             const despesas = filteredData.filter(t => t.type === 'expense');
@@ -1303,9 +1563,7 @@
 
             document.getElementById('chartStatusText').textContent = despesas.length > 0 ? "Visualizando Despesas" : "Visualizando Receitas";
 
-            dataToUse.forEach(t => {
-                counts[t.category] = (counts[t.category] || 0) + t.amount;
-            });
+            dataToUse.forEach(t => { counts[t.category] = (counts[t.category] || 0) + t.amount; });
 
             const labels = Object.keys(counts);
             const values = Object.values(counts);
@@ -1315,10 +1573,7 @@
             if (labels.length === 0) {
                 emptyChartMessage.classList.remove('hidden');
                 legendContainer.innerHTML = `<p class="text-center text-slate-400 text-xs py-4">Sem dados</p>`;
-                if (myChart) {
-                    myChart.destroy();
-                    myChart = null;
-                }
+                if (myChart) { myChart.destroy(); myChart = null; }
                 return;
             }
 
@@ -1352,7 +1607,6 @@
                 });
             }
 
-            // Desenhar Legendas
             legendContainer.innerHTML = '';
             labels.forEach((lbl, idx) => {
                 const val = values[idx];
@@ -1376,7 +1630,7 @@
         filterDateStart.addEventListener('change', render);
         filterDateEnd.addEventListener('change', render);
 
-        // Exportação de CSV
+        // Exportação de CSV do Perfil Ativo
         exportCsvBtn.addEventListener('click', () => {
             const profileTransactions = transactions.filter(t => (t.profileId || 'pessoal') === activeProfileId);
             if (profileTransactions.length === 0) {
@@ -1414,6 +1668,76 @@
 
         closeWhatsappModalBtn.addEventListener('click', closeModal);
         closeWhatsappModalBtn2.addEventListener('click', closeModal);
+
+        // --- INTEGRAÇÃO BANCÁRIA (SIMULAÇÃO) ---
+        function openBankModal() {
+            bankModal.classList.remove('pointer-events-none', 'opacity-0');
+            bankModal.querySelector('div').classList.remove('scale-95');
+            bankModal.querySelector('div').classList.add('scale-100');
+            
+            // Reset views
+            bankSelectionView.classList.remove('hidden');
+            bankLoadingView.classList.add('hidden');
+            bankLoadingView.classList.remove('flex');
+        }
+
+        function closeBankModal() {
+            bankModal.classList.add('pointer-events-none', 'opacity-0');
+            bankModal.querySelector('div').classList.remove('scale-100');
+            bankModal.querySelector('div').classList.add('scale-95');
+        }
+
+        bankSyncBtn.addEventListener('click', openBankModal);
+        closeBankModalBtn.addEventListener('click', closeBankModal);
+        closeBankModalBtn2.addEventListener('click', closeBankModal);
+
+        window.simulateBankConnection = function(bankName, bgClass, colorHex) {
+            bankSelectionView.classList.add('hidden');
+            bankLoadingView.classList.remove('hidden');
+            bankLoadingView.classList.add('flex');
+            
+            bankConnectingTitle.textContent = `Sincronizando ${bankName}...`;
+            bankSpinner.style.borderTopColor = 'transparent';
+            bankSpinner.style.borderColor = colorHex;
+            bankSpinner.classList.add('border-t-transparent');
+
+            // Simula o tempo de rede e autorização OAuth (3 segundos)
+            setTimeout(async () => {
+                if (!currentUser) return;
+                
+                try {
+                    const txsCollection = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'transactions');
+                    const today = new Date().toISOString().split('T')[0];
+                    
+                    // Transações mockadas dependendo do banco
+                    const mockTxs = [
+                        { type: 'expense', description: `Pix Enviado (${bankName})`, amount: (Math.random() * 150 + 20).toFixed(2), category: 'Outros Custos' },
+                        { type: 'expense', description: `Uber / 99App`, amount: (Math.random() * 40 + 10).toFixed(2), category: 'Transporte' },
+                        { type: 'income', description: `Rendimento CDI`, amount: (Math.random() * 5 + 0.5).toFixed(2), category: 'Investimentos' }
+                    ];
+
+                    for (const tx of mockTxs) {
+                        await addDoc(txsCollection, {
+                            type: tx.type,
+                            description: tx.description,
+                            amount: parseFloat(tx.amount),
+                            date: today,
+                            category: tx.category,
+                            profileId: activeProfileId,
+                            bank: bankName // Tag extra para identificar a origem
+                        });
+                    }
+
+                    triggerToast(`${mockTxs.length} transações do ${bankName} sincronizadas com sucesso!`);
+                } catch (err) {
+                    console.error("Erro na simulação bancária", err);
+                    triggerToast(`Falha ao conectar com ${bankName}.`, false);
+                } finally {
+                    closeBankModal();
+                }
+            }, 3000);
+        };
+
 
         // Controle do Modal de Configurações da Chave API
         function openSettings() {
@@ -1463,10 +1787,6 @@
             document.documentElement.classList.add('dark');
             themeIcon.setAttribute('data-lucide', 'sun');
         }
-
-        // Render inicial de perfis e dados
-        renderProfiles();
-        render();
     </script>
 </body>
 </html>
